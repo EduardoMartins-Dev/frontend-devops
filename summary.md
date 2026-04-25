@@ -6,11 +6,12 @@ Desenvolver uma aplicação frontend integrada a um fluxo de DevOps, utilizando 
 ---
 
 ## Membros do Grupo
-* Felipe Leoni - RA: 2507729
+* Arthur Salles Sanches - RA: 2507290
 * Membro 2 - RA: XXXXXX
-* Membro 3 - RA: XXXXXX
-* Membro 4 - RA: XXXXXX
-* Eduardo Martins Barbosa - RA: XXXXXX
+* Eduardo Martins Barbosa - RA: 2500781
+* Evillyn Ghiovana de Oliveira Galvão - RA: 2500298
+* Felipe Leoni Galafassi- RA: 2507729
+
 
 ---
 
