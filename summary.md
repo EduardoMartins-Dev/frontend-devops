@@ -30,7 +30,7 @@ Utilizaremos um padrão simplificado de tags para identificar o que foi feito em
 
 * **`[NOVO]`**: Inclusão de novas funcionalidades, páginas ou elementos.
     * *Ex: `git commit -m "[NOVO] Adiciona seção de contato no rodapé"`*
-  * **`[BUG]`**: Correcao de erros no código, layout ou testes.
+* **`[BUG]`**: Correcao de erros no código, layout ou testes.
     * *Ex: `git commit -m "[BUG] Corrige alinhamento do menu no mobile"`*
 * **`[AJUSTE]`**: Mudanças de estilo (CSS), textos, atualizações no README ou ajustes nos testes Cypress.
     * *Ex: `git commit -m "[AJUSTE] Atualiza cores dos botões para azul marinho"`*
