@@ -6,7 +6,7 @@ Desenvolver uma aplicação frontend integrada a um fluxo de DevOps, utilizando 
 ---
 
 ## Membros do Grupo
-* Membro 1 - RA: XXXXXX
+* Felipe Leoni - RA: 2507729
 * Membro 2 - RA: XXXXXX
 * Membro 3 - RA: XXXXXX
 * Membro 4 - RA: XXXXXX
