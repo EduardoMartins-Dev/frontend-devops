@@ -1,35 +1,193 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <title>Inicio</title>
+    <title>Agenda Acadêmica</title>
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Navbar</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav">
-        <a class="nav-link active" aria-current="page" href="#">Home</a>
-        <a class="nav-link" href="#">Features</a>
-        <a class="nav-link" href="#">Pricing</a>
-        <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-      </div>
-    </div>
-  </div>
-</nav>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Agenda Acadêmica</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#sobre">Perfil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#calendario">Calendário</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#anotacoes">Anotações</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-    <div class="geral">
-        <div class="sobre"></div>
-        <div class="calendario"></div>
-        <div class="anotacoes"></div>
+    <div class="geral container py-4">
+
+        <section class="sobre card mb-4" id="sobre">
+            <div class="card-body">
+                <h2 class="card-title section-title">Meu Perfil</h2>
+                <div class="perfil-grid">
+                    <div class="perfil-info">
+                        <div class="perfil-dados">
+                            <p><strong>Nome:</strong> <span class="dado">Aluno</span></p>
+                            <p><strong>Curso:</strong> <span class="dado">Ciência da Computação</span></p>
+                            <p><strong>Semestre:</strong> <span class="dado">5º</span></p>
+                            <p><strong>Período:</strong> <span class="dado">Noturno</span></p>
+                        </div>
+                    </div>
+                    <div class="materias">
+                        <h3>Matérias do Semestre</h3>
+                        <ul class="lista-materias">
+                            <li><span class="badge-materia badge-azul">Algoritmos</span></li>
+                            <li><span class="badge-materia badge-verde">Redes de Computadores</span></li>
+                            <li><span class="badge-materia badge-roxo">Banco de Dados</span></li>
+                            <li><span class="badge-materia badge-laranja">Engenharia de Software</span></li>
+                            <li><span class="badge-materia badge-vermelho">Cálculo III</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="calendario card mb-4" id="calendario">
+            <div class="card-body">
+                <h2 class="card-title section-title">Calendário — Maio 2026</h2>
+                <div class="cal-wrapper">
+                    <table class="cal-table">
+                        <thead>
+                            <tr>
+                                <th>Dom</th>
+                                <th>Seg</th>
+                                <th>Ter</th>
+                                <th>Qua</th>
+                                <th>Qui</th>
+                                <th>Sex</th>
+                                <th>Sáb</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>1</td>
+                                <td>2</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td class="hoje">5</td>
+                                <td>6 <span class="evento">Prova</span></td>
+                                <td>7</td>
+                                <td>8</td>
+                                <td>9</td>
+                                <td>10</td>
+                            </tr>
+                            <tr>
+                                <td>11</td>
+                                <td>12 <span class="evento">Entrega</span></td>
+                                <td>13</td>
+                                <td>14</td>
+                                <td>15</td>
+                                <td>16 <span class="evento">Seminário</span></td>
+                                <td>17</td>
+                            </tr>
+                            <tr>
+                                <td>18</td>
+                                <td>19</td>
+                                <td>20</td>
+                                <td>21</td>
+                                <td>22 <span class="evento">Prova</span></td>
+                                <td>23</td>
+                                <td>24</td>
+                            </tr>
+                            <tr>
+                                <td>25</td>
+                                <td>26</td>
+                                <td>27</td>
+                                <td>28</td>
+                                <td>29</td>
+                                <td>30 <span class="evento">Entrega</span></td>
+                                <td>31</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="legenda">
+                    <span class="legenda-item"> Hoje</span>
+                    <span class="legenda-item"> Prova</span>
+                    <span class="legenda-item"> Entrega</span>
+                    <span class="legenda-item"> Seminário</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="anotacoes card mb-4" id="anotacoes">
+            <div class="card-body">
+                <h2 class="card-title section-title">Anotações & Tarefas</h2>
+                <div class="notas-grid">
+
+                    <div class="nota nota-urgente">
+                        <div class="nota-header">
+                            <span class="nota-badge"> Urgente</span>
+                            <span class="nota-data">06/05</span>
+                        </div>
+                        <p class="nota-titulo">Prova de Algoritmos</p>
+                        <p class="nota-desc">Capítulos 4–7: Grafos e DP</p>
+                    </div>
+
+                    <div class="nota nota-importante">
+                        <div class="nota-header">
+                            <span class="nota-badge"> Importante</span>
+                            <span class="nota-data">12/05</span>
+                        </div>
+                        <p class="nota-titulo">Entrega do Projeto de BD</p>
+                        <p class="nota-desc">Finalizar diagrama ER e script SQL</p>
+                    </div>
+
+                    <div class="nota nota-normal">
+                        <div class="nota-header">
+                            <span class="nota-badge"> Normal</span>
+                            <span class="nota-data">16/05</span>
+                        </div>
+                        <p class="nota-titulo">Seminário de Redes</p>
+                        <p class="nota-desc">Preparar slides sobre TCP/IP</p>
+                    </div>
+
+                    <div class="nota nota-normal">
+                        <div class="nota-header">
+                            <span class="nota-badge"> Normal</span>
+                            <span class="nota-data">22/05</span>
+                        </div>
+                        <p class="nota-titulo">Prova de Cálculo III</p>
+                        <p class="nota-desc">Revisar séries de Taylor</p>
+                    </div>
+
+                    <div class="nota nota-importante">
+                        <div class="nota-header">
+                            <span class="nota-badge"> Importante</span>
+                            <span class="nota-data">30/05</span>
+                        </div>
+                        <p class="nota-titulo">Entrega Eng. de Software</p>
+                        <p class="nota-desc">Documento de requisitos v2.0</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
     </div>
+
+    <footer class="footer">
+        <p>Agenda Acadêmica · 2026</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
 </html>
