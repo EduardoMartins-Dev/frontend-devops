@@ -16,10 +16,11 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item"><a class="nav-link" href="#sobre">Perfil</a></li>
                     <li class="nav-item"><a class="nav-link" href="#calendario">Calendário</a></li>
                     <li class="nav-item"><a class="nav-link" href="#anotacoes">Anotações</a></li>
+                    <li class="nav-item"><button class="btn-logout" onclick="logout()">Sair</button></li>
                 </ul>
             </div>
         </div>
@@ -130,54 +131,42 @@
 
         <section class="anotacoes card mb-4" id="anotacoes">
             <div class="card-body">
-                <h2 class="card-title section-title">Anotações & Tarefas</h2>
-                <div class="notas-grid">
+                <div class="section-title-row">
+                    <h2 class="card-title section-title">Anotações & Tarefas</h2>
+                    <button class="btn-nova-nota" onclick="mostrarFormNota()">+ Nova</button>
+                </div>
 
-                    <div class="nota nota-urgente">
-                        <div class="nota-header">
-                            <span class="nota-badge"> Urgente</span>
-                            <span class="nota-data">06/05</span>
+                <form id="form-nova-nota" style="display:none" onsubmit="salvarAnotacao(event)" class="form-nota">
+                    <div class="form-nota-campos">
+                        <div class="campo-grupo">
+                            <label for="nova-titulo">Título *</label>
+                            <input type="text" id="nova-titulo" placeholder="Ex: Prova de Algoritmos" required>
                         </div>
-                        <p class="nota-titulo">Prova de Algoritmos</p>
-                        <p class="nota-desc">Capítulos 4–7: Grafos e DP</p>
-                    </div>
-
-                    <div class="nota nota-importante">
-                        <div class="nota-header">
-                            <span class="nota-badge"> Importante</span>
-                            <span class="nota-data">12/05</span>
+                        <div class="campo-grupo">
+                            <label for="nova-prioridade">Prioridade</label>
+                            <select id="nova-prioridade">
+                                <option value="normal">Normal</option>
+                                <option value="importante">Importante</option>
+                                <option value="urgente">Urgente</option>
+                            </select>
                         </div>
-                        <p class="nota-titulo">Entrega do Projeto de BD</p>
-                        <p class="nota-desc">Finalizar diagrama ER e script SQL</p>
-                    </div>
-
-                    <div class="nota nota-normal">
-                        <div class="nota-header">
-                            <span class="nota-badge"> Normal</span>
-                            <span class="nota-data">16/05</span>
+                        <div class="campo-grupo">
+                            <label for="nova-data">Data</label>
+                            <input type="date" id="nova-data">
                         </div>
-                        <p class="nota-titulo">Seminário de Redes</p>
-                        <p class="nota-desc">Preparar slides sobre TCP/IP</p>
-                    </div>
-
-                    <div class="nota nota-normal">
-                        <div class="nota-header">
-                            <span class="nota-badge"> Normal</span>
-                            <span class="nota-data">22/05</span>
+                        <div class="campo-grupo campo-full">
+                            <label for="nova-conteudo">Descrição</label>
+                            <textarea id="nova-conteudo" placeholder="Detalhes da tarefa..." rows="2"></textarea>
                         </div>
-                        <p class="nota-titulo">Prova de Cálculo III</p>
-                        <p class="nota-desc">Revisar séries de Taylor</p>
                     </div>
-
-                    <div class="nota nota-importante">
-                        <div class="nota-header">
-                            <span class="nota-badge"> Importante</span>
-                            <span class="nota-data">30/05</span>
-                        </div>
-                        <p class="nota-titulo">Entrega Eng. de Software</p>
-                        <p class="nota-desc">Documento de requisitos v2.0</p>
+                    <div class="form-nota-acoes">
+                        <button type="submit" class="btn-submit-sm">Salvar</button>
+                        <button type="button" class="btn-cancelar" onclick="mostrarFormNota()">Cancelar</button>
                     </div>
+                </form>
 
+                <div id="notas-container" class="notas-grid">
+                    <p class="sem-notas">Carregando anotações...</p>
                 </div>
             </div>
         </section>
@@ -188,6 +177,13 @@
         <p>Agenda Acadêmica · 2026</p>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script>
+        checkAuth().then(session => { if (session) carregarAnotacoes() })
+    </script>
 </body>
 </html>
