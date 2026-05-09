@@ -1,23 +1,7 @@
-// ============================================================
-//  AGENDA ACADÊMICA — script.js
-//  Responsável: JavaScript do index.html
-//  Funcionalidades:
-//    1. Modal de eventos ao clicar em dia do calendário
-//    2. Sistema de anotações funcional (memória)
-// ============================================================
- 
-// ─────────────────────────────────────────────
-//  1. DADOS — Eventos do calendário (Maio 2026)
-// ─────────────────────────────────────────────
- 
-const eventosPorDia = {
-    6:  [{ tipo: 'prova',    titulo: 'Prova de Algoritmos',         desc: 'Conteúdo: recursão e ordenação. Sala 12.' }],
-    12: [{ tipo: 'entrega',  titulo: 'Entrega — Redes',             desc: 'Trabalho sobre protocolo TCP/IP.' }],
-    16: [{ tipo: 'seminario',titulo: 'Seminário — Eng. de Software', desc: 'Apresentação em grupo. 10 min por grupo.' }],
-    22: [{ tipo: 'prova',    titulo: 'Prova de Cálculo III',         desc: 'Integrais múltiplas. Calculadora permitida.' }],
-    30: [{ tipo: 'entrega',  titulo: 'Entrega — Banco de Dados',    desc: 'Diagrama ER + script SQL.' }],
-}
- 
+let anotacoes = []
+let eventos = []
+let userId = null
+
 const labelTipo = {
     prova:     { label: 'Prova',     cor: '#ef4444', fundo: '#fee2e2' },
     entrega:   { label: 'Entrega',   cor: '#f59e0b', fundo: '#fffbeb' },
@@ -25,40 +9,67 @@ const labelTipo = {
     aula:      { label: 'Aula',      cor: '#2563eb', fundo: '#dbeafe' },
     outro:     { label: 'Outro',     cor: '#64748b', fundo: '#f1f5f9' },
 }
- 
-// ─────────────────────────────────────────────
-//  2. BANCO DE ANOTAÇÕES em memória
-// ─────────────────────────────────────────────
- 
-let anotacoes = []
-let proximoId = 1
- 
-// ─────────────────────────────────────────────
-//  3. INICIALIZAÇÃO
-// ─────────────────────────────────────────────
- 
-document.addEventListener('DOMContentLoaded', () => {
+
+document.addEventListener('DOMContentLoaded', async () => {
+    const { data: { user } } = await db.auth.getUser()
+    if (!user) return
+    userId = user.id
+
+    await Promise.all([carregarAnotacoes(), carregarEventos()])
+
     inicializarCalendario()
     inicializarModal()
     inicializarAnotacoes()
+    renderizarAnotacoes()
 })
- 
+
 // ─────────────────────────────────────────────
-//  4. CALENDÁRIO — clique nas células
+//  DB — Anotações
 // ─────────────────────────────────────────────
- 
+
+async function carregarAnotacoes() {
+    const { data, error } = await db
+        .from('anotacoes')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+
+    if (error) {
+        console.error('Erro ao carregar anotações:', error)
+        return
+    }
+    anotacoes = data || []
+}
+
+async function carregarEventos() {
+    const { data, error } = await db
+        .from('eventos')
+        .select('*')
+        .eq('user_id', userId)
+        .order('data', { ascending: true })
+
+    if (error) {
+        console.error('Erro ao carregar eventos:', error)
+        return
+    }
+    eventos = data || []
+}
+
+// ─────────────────────────────────────────────
+//  CALENDÁRIO
+// ─────────────────────────────────────────────
+
 function inicializarCalendario() {
     const celulas = document.querySelectorAll('.cal-table td')
- 
+
     celulas.forEach(td => {
-        // Extrai só o número do dia (ignora spans de evento)
         const textoNode = [...td.childNodes].find(n => n.nodeType === Node.TEXT_NODE)
         const dia = textoNode ? parseInt(textoNode.textContent.trim()) : NaN
- 
+
         if (!isNaN(dia) && dia > 0) {
             td.style.cursor = 'pointer'
             td.setAttribute('data-dia', dia)
- 
+
             td.addEventListener('mouseenter', () => {
                 if (!td.classList.contains('hoje')) {
                     td.style.background = 'var(--primary-light)'
@@ -73,13 +84,12 @@ function inicializarCalendario() {
         }
     })
 }
- 
+
 // ─────────────────────────────────────────────
-//  5. MODAL DE EVENTOS DO DIA
+//  MODAL
 // ─────────────────────────────────────────────
- 
+
 function inicializarModal() {
-    // Cria o overlay + modal uma única vez no DOM
     const overlay = document.createElement('div')
     overlay.id = 'modal-overlay'
     overlay.innerHTML = `
@@ -95,8 +105,7 @@ function inicializarModal() {
         </div>
     `
     document.body.appendChild(overlay)
- 
-    // Estilos do modal via JS (sem precisar alterar style.css)
+
     const style = document.createElement('style')
     style.textContent = `
         #modal-overlay {
@@ -109,9 +118,7 @@ function inicializarModal() {
             align-items: center;
             justify-content: center;
         }
-        #modal-overlay.ativo {
-            display: flex;
-        }
+        #modal-overlay.ativo { display: flex; }
         #modal-dia {
             background: var(--surface);
             border-radius: 12px;
@@ -165,20 +172,9 @@ function inicializarModal() {
             margin-bottom: 0.6rem;
             border-left: 4px solid transparent;
         }
-        .modal-evento-icone {
-            font-size: 1.2rem;
-            flex-shrink: 0;
-            margin-top: 1px;
-        }
-        .modal-evento-info strong {
-            display: block;
-            font-size: 0.88rem;
-            margin-bottom: 0.15rem;
-        }
-        .modal-evento-info span {
-            font-size: 0.8rem;
-            color: var(--muted);
-        }
+        .modal-evento-icone { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+        .modal-evento-info strong { display: block; font-size: 0.88rem; margin-bottom: 0.15rem; }
+        .modal-evento-info span { font-size: 0.8rem; color: var(--muted); }
         .modal-badge {
             display: inline-block;
             font-size: 0.7rem;
@@ -211,20 +207,9 @@ function inicializarModal() {
             font-size: 0.85rem;
             border-left: 3px solid var(--border);
         }
-        .modal-anotacao-item strong {
-            display: block;
-            margin-bottom: 0.15rem;
-            font-size: 0.87rem;
-        }
-        .modal-anotacao-item p {
-            margin: 0;
-            color: var(--muted);
-            font-size: 0.8rem;
-        }
-        #modal-footer {
-            padding: 0.75rem 1.25rem;
-            border-top: 1px solid var(--border);
-        }
+        .modal-anotacao-item strong { display: block; margin-bottom: 0.15rem; font-size: 0.87rem; }
+        .modal-anotacao-item p { margin: 0; color: var(--muted); font-size: 0.8rem; }
+        #modal-footer { padding: 0.75rem 1.25rem; border-top: 1px solid var(--border); }
         #modal-nova-anotacao {
             background: none;
             border: 1.5px dashed var(--primary);
@@ -237,38 +222,37 @@ function inicializarModal() {
             width: 100%;
             transition: background 0.15s;
         }
-        #modal-nova-anotacao:hover {
-            background: var(--primary-light);
-        }
+        #modal-nova-anotacao:hover { background: var(--primary-light); }
         .cal-table td[data-dia]:not(.hoje):hover {
             background: var(--primary-light) !important;
         }
     `
     document.head.appendChild(style)
- 
-    // Fechar ao clicar no overlay ou no botão
+
     overlay.addEventListener('click', e => { if (e.target === overlay) fecharModal() })
     document.getElementById('modal-fechar').addEventListener('click', fecharModal)
     document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharModal() })
 }
- 
+
 function abrirModalDia(dia, tdEl) {
     const overlay = document.getElementById('modal-overlay')
     const titulo  = document.getElementById('modal-dia-titulo')
     const corpo   = document.getElementById('modal-corpo')
     const btnNova = document.getElementById('modal-nova-anotacao')
- 
+
     const diasSemana = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado']
-    const data = new Date(2026, 4, dia) // maio = mês 4
+    const data = new Date(2026, 4, dia)
     titulo.textContent = `${dia} de maio — ${diasSemana[data.getDay()]}`
- 
-    // ── Eventos do calendário ──
-    const eventos = eventosPorDia[dia] || []
+
+    const dataISO = `2026-05-${String(dia).padStart(2,'0')}`
+    const eventosDoDia = eventos.filter(ev => ev.data === dataISO)
+    const anotacoesDoDia = anotacoes.filter(a => a.data === dataISO)
+
     let html = ''
- 
-    if (eventos.length > 0) {
+
+    if (eventosDoDia.length > 0) {
         html += '<p class="modal-secao-titulo">Eventos</p>'
-        eventos.forEach(ev => {
+        eventosDoDia.forEach(ev => {
             const config = labelTipo[ev.tipo] || labelTipo.outro
             const icones = { prova: '📝', entrega: '📦', seminario: '🎤', aula: '📚', outro: '📌' }
             html += `
@@ -276,16 +260,14 @@ function abrirModalDia(dia, tdEl) {
                     <span class="modal-evento-icone">${icones[ev.tipo] || '📌'}</span>
                     <div class="modal-evento-info">
                         <span class="modal-badge" style="background:${config.fundo}; color:${config.cor}">${config.label}</span>
-                        <strong>${ev.titulo}</strong>
-                        <span>${ev.desc}</span>
+                        <strong>${escapeHtml(ev.titulo)}</strong>
+                        <span>${escapeHtml(ev.descricao || '')}</span>
                     </div>
                 </div>
             `
         })
     }
- 
-    // ── Anotações do dia ──
-    const anotacoesDoDia = anotacoes.filter(a => a.data === `2026-05-${String(dia).padStart(2,'0')}`)
+
     if (anotacoesDoDia.length > 0) {
         html += '<p class="modal-secao-titulo">Suas anotações</p>'
         anotacoesDoDia.forEach(a => {
@@ -297,111 +279,111 @@ function abrirModalDia(dia, tdEl) {
             `
         })
     }
- 
-    if (eventos.length === 0 && anotacoesDoDia.length === 0) {
+
+    if (eventosDoDia.length === 0 && anotacoesDoDia.length === 0) {
         html = '<p class="modal-sem-eventos">Nenhum evento ou anotação para este dia.</p>'
     }
- 
+
     corpo.innerHTML = html
- 
-    // Botão "criar anotação para este dia" preenche o formulário e fecha modal
+
     btnNova.onclick = () => {
         fecharModal()
-        const dataFormatada = `2026-05-${String(dia).padStart(2,'0')}`
-        abrirFormComData(dataFormatada)
+        abrirFormComData(dataISO)
     }
- 
+
     overlay.classList.add('ativo')
     document.getElementById('modal-fechar').focus()
 }
- 
+
 function fecharModal() {
     document.getElementById('modal-overlay').classList.remove('ativo')
 }
- 
+
 // ─────────────────────────────────────────────
-//  6. SISTEMA DE ANOTAÇÕES
+//  ANOTAÇÕES — UI + CRUD
 // ─────────────────────────────────────────────
- 
+
 function inicializarAnotacoes() {
-    // Redireciona o form original para nossa função JS
     const form = document.getElementById('form-nova-nota')
     if (form) {
         form.onsubmit = null
         form.addEventListener('submit', salvarAnotacao)
     }
- 
-    // Redireciona botão "+ Nova"
+
     const btnNova = document.querySelector('.btn-nova-nota')
     if (btnNova) {
         btnNova.onclick = null
         btnNova.addEventListener('click', toggleFormNota)
     }
- 
-    // Botão cancelar
+
     const btnCancelar = document.querySelector('.btn-cancelar')
     if (btnCancelar) {
         btnCancelar.onclick = null
-        btnCancelar.addEventListener('click', () => {
-            ocultarFormNota()
-        })
+        btnCancelar.addEventListener('click', ocultarFormNota)
     }
- 
-    renderizarAnotacoes()
 }
- 
-function salvarAnotacao(event) {
+
+async function salvarAnotacao(event) {
     event.preventDefault()
- 
-    const titulo    = document.getElementById('nova-titulo').value.trim()
+
+    const titulo     = document.getElementById('nova-titulo').value.trim()
     const prioridade = document.getElementById('nova-prioridade').value
-    const conteudo  = document.getElementById('nova-conteudo').value.trim()
-    const data      = document.getElementById('nova-data').value
- 
+    const conteudo   = document.getElementById('nova-conteudo').value.trim()
+    const data       = document.getElementById('nova-data').value
+
     if (!titulo) return
- 
-    const nova = {
-        id: proximoId++,
+
+    const { error } = await db.from('anotacoes').insert({
+        user_id: userId,
         titulo,
         prioridade,
-        conteudo: conteudo || '',
-        data: data || '',
-        criadaEm: new Date()
+        conteudo: conteudo || null,
+        data: data || null
+    })
+
+    if (error) {
+        console.error('Erro ao salvar anotação:', error)
+        return
     }
- 
-    anotacoes.unshift(nova) // mais recente primeiro
+
+    await carregarAnotacoes()
     renderizarAnotacoes()
     ocultarFormNota()
     event.target.reset()
 }
- 
-function deletarAnotacao(id) {
-    anotacoes = anotacoes.filter(a => a.id !== id)
+
+async function deletarAnotacao(id) {
+    const { error } = await db.from('anotacoes').delete().eq('id', id)
+    if (error) {
+        console.error('Erro ao deletar anotação:', error)
+        return
+    }
+    await carregarAnotacoes()
     renderizarAnotacoes()
 }
- 
+
 function renderizarAnotacoes() {
     const container = document.getElementById('notas-container')
     if (!container) return
- 
+
     if (anotacoes.length === 0) {
         container.innerHTML = '<p class="sem-notas">Nenhuma anotação ainda. Clique em "+ Nova" para começar.</p>'
         return
     }
- 
+
     container.innerHTML = anotacoes.map(nota => {
         const classe = `nota-${nota.prioridade}`
         const dataFormatada = nota.data
             ? new Date(nota.data + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })
             : ''
- 
+
         const labelPrioridade = {
             normal:     { texto: 'Normal',     cor: '#15803d' },
             importante: { texto: 'Importante', cor: '#b45309' },
             urgente:    { texto: 'Urgente',    cor: '#b91c1c' },
         }
         const lp = labelPrioridade[nota.prioridade] || labelPrioridade.normal
- 
+
         return `
             <div class="nota ${classe}" data-id="${nota.id}" style="animation: notaEntrar 0.25s ease">
                 <div class="nota-header">
@@ -414,8 +396,7 @@ function renderizarAnotacoes() {
             </div>
         `
     }).join('')
- 
-    // Animação de entrada
+
     if (!document.getElementById('nota-anim-style')) {
         const s = document.createElement('style')
         s.id = 'nota-anim-style'
@@ -423,11 +404,11 @@ function renderizarAnotacoes() {
         document.head.appendChild(s)
     }
 }
- 
+
 // ─────────────────────────────────────────────
-//  7. CONTROLE DO FORMULÁRIO
+//  FORMULÁRIO
 // ─────────────────────────────────────────────
- 
+
 function toggleFormNota() {
     const form = document.getElementById('form-nova-nota')
     if (!form) return
@@ -439,7 +420,7 @@ function toggleFormNota() {
         document.getElementById('nova-titulo')?.focus()
     }
 }
- 
+
 function ocultarFormNota() {
     const form = document.getElementById('form-nova-nota')
     if (form) {
@@ -447,8 +428,7 @@ function ocultarFormNota() {
         form.reset()
     }
 }
- 
-// Abre o formulário já com uma data pré-preenchida (chamado pelo modal)
+
 function abrirFormComData(dataISO) {
     const form = document.getElementById('form-nova-nota')
     if (!form) return
@@ -456,15 +436,14 @@ function abrirFormComData(dataISO) {
     const inputData = document.getElementById('nova-data')
     if (inputData) inputData.value = dataISO
     document.getElementById('nova-titulo')?.focus()
- 
-    // Scroll suave até o formulário
+
     document.getElementById('anotacoes')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
- 
+
 // ─────────────────────────────────────────────
-//  8. UTILITÁRIOS
+//  UTIL
 // ─────────────────────────────────────────────
- 
+
 function escapeHtml(str) {
     const div = document.createElement('div')
     div.textContent = str
