@@ -12,3 +12,4 @@ async function logout() {
     await db.auth.signOut()
     window.location.href = 'login.html'
 }
+
